@@ -1,0 +1,47 @@
+name: 'Terraform Runner Action'
+description: 'Executa comandos Terraform dentro de um container Docker utilizando GHCR.'
+author: 'brunordias'
+
+inputs:
+  aws_default_region:
+    description: 'Região padrão da AWS.'
+    required: true
+    default: 'us-east-1'
+  
+  aws_access_key_id:
+    description: 'Access Key ID da AWS.'
+    required: true
+
+  aws_secret_access_key:
+    description: 'Secret Access Key da AWS.'
+    required: true
+
+  tf_bucket:
+    description: 'Nome do bucket S3 para armazenar estados do Terraform.'
+    required: true
+
+  tf_mode:
+    description: 'Modo de execução do Terraform (plan, apply).'
+    required: true
+    default: 'plan'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout do repositório
+      uses: actions/checkout@v3
+
+    - name: Copiar terraform.tfvars para o container
+      run: |
+        docker create --name terraform-runner ghcr.io/brunordias/terraform-runner-actions:latest
+        docker cp terraform.tfvars terraform-runner:/terraform/terraform.tfvars
+
+    - name: Executar Terraform dentro do container
+      run: |
+        docker start -a terraform-runner \
+          -e AWS_DEFAULT_REGION="${{ inputs.aws_default_region }}" \
+          -e AWS_ACCESS_KEY_ID="${{ inputs.aws_access_key_id }}" \
+          -e AWS_SECRET_ACCESS_KEY="${{ inputs.aws_secret_access_key }}" \
+          -e TF_BUCKET="${{ inputs.tf_bucket }}" \
+          -e TF_MODE="${{ inputs.tf_mode }}" \
+          ghcr.io/brunordias/terraform-runner-actions:latest
