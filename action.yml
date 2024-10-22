@@ -32,13 +32,13 @@ runs:
       uses: actions/checkout@v3
 
     - name: Copiar terraform.tfvars para o container
-      shell: bash
+      shell: sh
       run: |
         docker create --name terraform-runner ghcr.io/brunordias/terraform-runner-actions:latest
         docker cp terraform.tfvars terraform-runner:/terraform/terraform.tfvars
 
     - name: Executar Terraform dentro do container
-      shell: bash
+      shell: sh
       run: |
         docker start -a terraform-runner \
           -e AWS_DEFAULT_REGION="${{ inputs.aws_default_region }}" \
