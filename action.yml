@@ -46,5 +46,4 @@ runs:
           -e AWS_SECRET_ACCESS_KEY="${{ inputs.aws_secret_access_key }}" \
           -e TF_BUCKET="${{ inputs.tf_bucket }}" \
           -e TF_MODE="${{ inputs.tf_mode }}" \
-          ghcr.io/brunordias/terraform-runner-actions:latest \
-          ${TF_MODE} -var-file=/terraform/terraform.tfvars
+          ghcr.io/brunordias/terraform-runner-actions:latest
