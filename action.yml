@@ -25,6 +25,11 @@ inputs:
     required: true
     default: 'plan'
 
+outputs:
+  plan_success:
+    description: 'Indica se o plan foi executado com sucesso.'
+    value: ${{ steps.plan.outcome }}
+
 runs:
   using: 'composite'
   steps:
