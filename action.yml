@@ -49,7 +49,7 @@ runs:
           -e AWS_SECRET_ACCESS_KEY="${{ inputs.aws_secret_access_key }}" \
           -e TF_BUCKET="${{ inputs.tf_bucket }}" \
           -e TF_MODE="${{ inputs.tf_mode }}" \
-          -e TF_BUCKET_KEY="${{ inputs.tf_bucket_key }}"
+          -e TF_BUCKET_KEY="${{ inputs.tf_bucket_key }}" \
           ghcr.io/brunordias/terraform-runner-actions:latest
 
     - name: Copiar terraform.tfvars para o container
