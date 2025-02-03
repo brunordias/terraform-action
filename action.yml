@@ -56,7 +56,7 @@ runs:
           -e TF_BUCKET_KEY="${{ inputs.tf_bucket_key }}" \
           -e GITHUB_TOKEN="${{ inputs.github_token }}" \
           -e GITHUB_REPOSITORY="${{ github.repository }}" \
-          -e GITHUB_EVENT_PATH="${{ github.event_path }}" \
+          -e GITHUB_PR_NUMBER="${{ github.event.number }}" \
           -e GITHUB_RUN_ID="${{ github.run_id }}" \
           ghcr.io/brunordias/terraform-runner-actions:latest
 
