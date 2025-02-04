@@ -16,11 +16,11 @@ inputs:
     description: 'Secret Access Key da AWS.'
     required: true
 
-  tf_bucket:
+  tf_backend_bucket:
     description: 'Nome do bucket S3 para armazenar estados do Terraform.'
     required: true
 
-  tf_bucket_key:
+  tf_workspace:
     description: 'Key do bucket S3 para armazenar estados do Terraform.'
     required: true
 
@@ -29,9 +29,14 @@ inputs:
     required: true
     default: 'plan'
 
+  tf_config_dir:
+    description: 'Diretorio com arquivos de configuração do Terraform.'
+    required: true
+    default: '.'
+
   github_token:
     description: 'Token do GitHub para permitir comentários no PR.'
-    required: false
+    required: true
 
 outputs:
   plan_success:
@@ -49,11 +54,12 @@ runs:
       run: |
         docker create --name terraform-runner \
           -e AWS_DEFAULT_REGION="${{ inputs.aws_default_region }}" \
+          -e TF_VAR_aws_default_region="${{ inputs.aws_default_region }}" \
           -e AWS_ACCESS_KEY_ID="${{ inputs.aws_access_key_id }}" \
           -e AWS_SECRET_ACCESS_KEY="${{ inputs.aws_secret_access_key }}" \
-          -e TF_BUCKET="${{ inputs.tf_bucket }}" \
+          -e TF_BUCKET="${{ inputs.tf_backend_bucket }}" \
           -e TF_MODE="${{ inputs.tf_mode }}" \
-          -e TF_BUCKET_KEY="${{ inputs.tf_bucket_key }}" \
+          -e TF_BUCKET_KEY="${{ inputs.tf_workspace }}" \
           -e GITHUB_TOKEN="${{ inputs.github_token }}" \
           -e GITHUB_REPOSITORY="${{ github.repository }}" \
           -e GITHUB_PR_NUMBER="${{ github.event.number }}" \
@@ -63,7 +69,7 @@ runs:
     - name: Copiar terraform.tfvars para o container
       shell: bash
       run: |
-        docker cp terraform.tfvars terraform-runner:/terraform/terraform.tfvars
+        docker cp "${{ inputs.tf_config_dir }}/." terraform-runner:/terraform/
 
     - name: Iniciar o Container Terraform
       shell: bash
